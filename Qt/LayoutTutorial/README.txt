@@ -1,0 +1,1 @@
+When you first open the .pro file in Qt Creator, it will request that you configure the project. Once you select a kit/toolchain and click "Configure project", you should be able to build.
