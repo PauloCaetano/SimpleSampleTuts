@@ -1,0 +1,41 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+<!--
+THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. BY USING THIS SOFTWARE YOU ASSUME FULL AND TOTAL RESPONSIBILITY FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!-- 
+If you need more info, read the post in: http://cidebycide.blogspot.com/2013/04/developing-with-qt-on-msvc-express-ide.html
+Based on the work posted here: http://truth2.wordpress.com/2010/09/04/custom-build-rules-for-qt-under-visual-studio-2010/
+-->
+
+<!--
+THIS DEFINES THE UNIVERSE OF FILES THAT NEED TO BE UIC-COMPILED.
+-->
+<ItemGroup>
+    <UIFiles Include="$(MSBuildProjectDirectory)\**\*.ui" />
+</ItemGroup>
+
+<!--
+PROPERTIES USED IN INVOKING UIC
+UIC_EXE - REPLACE WITH THE PATH TO uic.exe ON YOUR SYSTEM.
+-->
+<PropertyGroup>
+    <UIC_EXE>C:\Dev\lib2\msvc\qt\qt501\debug\bin\uic.exe</UIC_EXE>
+</PropertyGroup>
+
+ 
+<Target Name="QtUICompile" BeforeTargets="ClCompile" Inputs="@(UIFiles)" Outputs="@(UIFiles->'$(Configuration)\ui_%(Filename).h')">
+    <Message Text="Compiling: %(UIFiles.FullPath) using UIC" />
+    <Exec Command="$(UIC_EXE) %(UIFiles.FullPath) -o $(Configuration)\ui_%(UIFiles.Filename).h"/>
+ 
+<!--
+ADD OUR UIC-COMPILED FILES TO THE COMPILATION LIST. THIS WAY, WE WON'T HAVE TO WORRY ABOUT ADDING THESE IN THE IDE.
+-->
+    <ItemGroup>
+        <ClInclude Include="$(Configuration)\ui_%(UIFiles.Filename).h" />
+    </ItemGroup>
+
+ </Target>
+
+</Project>

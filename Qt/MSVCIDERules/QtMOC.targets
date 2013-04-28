@@ -1,0 +1,87 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+<!--
+THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. BY USING THIS SOFTWARE YOU ASSUME FULL AND TOTAL RESPONSIBILITY FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<!-- 
+If you need more info, read the post in: http://cidebycide.blogspot.com/2013/04/developing-with-qt-on-msvc-express-ide.html
+Based on the work posted here: http://truth2.wordpress.com/2010/09/04/custom-build-rules-for-qt-under-visual-studio-2010/
+-->
+
+<!--
+THIS DEFINES THE UNIVERSE OF FILES THAT MAY NEED TO BE MOC-COMPILED. WE EXCLUDE ANY THAT MAY HAVE BEEN THE RESULT OF PREVIOUS MOC-COMPILATIONS.
+-->
+<ItemGroup>
+    <PotentialMOCFiles Include="$(MSBuildProjectDirectory)\**\*.h;$(MSBuildProjectDirectory)\**\*.cpp" Exclude="$(MSBuildProjectDirectory)\**\moc_*.cpp" />
+</ItemGroup>
+
+<!--
+PROPERTIES USED IN INVOKING MOC, EXCEPT FOR MOC_LIST_FILE AND MOC_FILTER_BATCH.
+MOC_FILTER_BATCH OUTPUTS TO MOC_LIST_FILE THE LIST OF THE SOURCE FILES THAT ACTUALLY NEED TO BE MOC-COMPILED
+
+MOC_EXE - REPLACE WITH THE PATH TO moc.exe ON YOUR SYSTEM.
+MOC_DEFINES - I'VE RETRIEVED THESE FROM THE RESULT OF "qmake -tp vc". AS YOU ADD MORE FILES TO THE PROJECT, IT'S POSSIBLE
+    THESE NEED TO BE REVIEWED. MY SUGGESTION WOULD BE TO RERUN "qmake -tp vc" (WITHOUT OVERWRITING THE .vcxproj, OBVIOUSLY)
+    AND CHECK IF THE moc INVOCATION IT GENERATES HAS NEW #defines.
+MOC_INCLUDES - SAMES AS MOC_DEFINES.
+MOC_LIST_FILE - I'VE PLACED IT ON THE PROJECT ROOT FOLDER.
+MOC_FILTER_BATCH - PATH TO THE BATCH THAT WILL DETERMINE WHICH .h AND .cpp FILES NEED TO BE MOC-COMPILED.
+-->
+<PropertyGroup>
+    <MOC_EXE>C:\Dev\lib2\msvc\qt\qt501\debug\bin\moc.exe</MOC_EXE>
+    <MOC_DEFINES>-DUNICODE -DWIN32 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1700 -DWIN32</MOC_DEFINES>
+    <MOC_INCLUDES>-I"C:\Dev\lib2\msvc\qt\qt501\debug\include" -I"C:\Dev\lib2\msvc\qt\qt501\debug\include\QtWidgets" -I"C:\Dev\lib2\msvc\qt\qt501\debug\include\QtGui" -I"C:\Dev\lib2\msvc\qt\qt501\debug\include\QtCore" -I"debug" -I"." -IC:\Dev\lib2\msvc\qt\qt501\debug\mkspecs\win32-msvc2012</MOC_INCLUDES>
+    <MOC_LIST_FILE>$(MSBuildProjectDirectory)\MocFileList.txt</MOC_LIST_FILE>
+    <MOC_FILTER_BATCH>F:\dev\scripts\GatherMOCs.bat</MOC_FILTER_BATCH>
+</PropertyGroup>
+
+<!--
+THIS IS THE ACTUAL MOC-COMPILER INVOCATION.
+THE DEPENDENCIES ARE AS FOLLOWS: QtMOCCompile DEPENDS ON QtReadMOCList, WHICH DEPENDS ON QtGatherMOCList,
+WHICH DEPENDS ON QtClearMOCList. IOW, FIRST WE CLEAN THE LIST FILE, THEN WE GATHER THE LIST OF FILES TO
+MOC-COMPILE, THEN WE READ THAT LIST, AND FINALLY WE COMPILE THE FILES.
+-->
+<Target Name="QtMOCCompile" BeforeTargets="ClCompile" DependsOnTargets="QtReadMOCList" Inputs="@(ActualMOCFiles)" Outputs="@(ActualMOCFiles->'$(Configuration)\moc_%(Filename).cpp')">
+    <Message Text="Compiling: %(ActualMOCFiles.FullPath) using MOC" />
+    <Exec Command="$(MOC_EXE) $(MOC_DEFINES) $(MOC_INCLUDES) %(ActualMOCFiles.FullPath) -o $(Configuration)\moc_%(ActualMOCFiles.Filename).cpp" />
+ 
+<!--
+ADD OUR MOC-COMPILED FILES TO THE COMPILATION LIST. THIS WAY, WE WON'T HAVE TO WORRY ABOUT ADDING THESE IN THE IDE.
+-->
+     <ItemGroup>
+        <ClCompile Include="$(Configuration)\moc_%(ActualMOCFiles.Filename).cpp" />
+    </ItemGroup>
+</Target>
+
+<!--
+WE CALL THE BATCH SCRIPT FOR EACH FILE THAT MAY NEED TO BE MOC-COMPILED. THE SCRIPT RUNS A GREP FOR "Q_OBJECT" ON THE FILE, AND WRITES THE FILEPATH
+TO AN OUTPUT FILE IF GREP RETURNS A MATCH.
+-->
+<Target Name="QtGatherMOCList" DependsOnTargets="QtClearMOCList">
+    <Message Text="Gathering MOCs : %(PotentialMOCFiles.FullPath)" /> 
+    <Exec Command="$(MOC_FILTER_BATCH) %(PotentialMOCFiles.FullPath) $(MOC_LIST_FILE)">
+    </Exec>
+</Target>
+
+<!--
+OUR BATCH SCRIPT THAT GATHERS ALL THE FILES TO MOC-COMPILE APPENDS THEM TO A FILE.
+THIS MEANS WE HAVE TO CLEAN THAT FILE BEFORE WE START, OTHERWISE WE'LL HAVE AN ENDLESS APPEND.
+-->
+<Target Name="QtClearMOCList" >
+    <Message Text="Clearing MOC list" />
+    <Exec ContinueOnError="true" Command="del $(MOC_LIST_FILE)">
+    </Exec>
+</Target>
+
+<!--
+READ THE FILES TO MOC-COMPILE
+-->
+<Target Name="QtReadMOCList" DependsOnTargets="QtGatherMOCList">
+    <Message Text="Reading from file $(MOC_LIST_FILE)" />
+    <ReadLinesFromFile File="$(MOC_LIST_FILE)">
+        <Output TaskParameter="Lines" ItemName="ActualMOCFiles" />
+    </ReadLinesFromFile>
+</Target>
+
+</Project>
