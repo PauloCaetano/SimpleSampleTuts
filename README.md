@@ -5,6 +5,7 @@ Simple code samples/concepts and tutorials, in C++.
 
 Contains the following samples/tutorials:
 * Logger
+
  A solution for implementing logging in a library. See posts [here](http://cidebycide.blogspot.pt/2013/05/logger-wrapper-revisited.html).
  Uses POCO C++'s classes, but these can be easily removed. Includes project files for MSVC and Qt Creator.
 
