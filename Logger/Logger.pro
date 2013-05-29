@@ -82,4 +82,5 @@ HEADERS += \
     logger.h \
     lib_logger.h \
     loggercout.h \
-    loggerbridge.h
+    loggerbridge.h \
+    checklibinterface.h

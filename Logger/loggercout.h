@@ -10,9 +10,18 @@ namespace SomethingElse
 class LoggerCout
 {
 public:
-    explicit LoggerCout(std::string const& /*loggerName*/) {}
+    explicit LoggerCout(std::string const&, char const* = nullptr) {}
 
     static void CreateLogger(std::string const& /*loggerName*/, std::string const& /*configFile*/) {}
+
+    bool IsCritical() const { return true; }
+    bool IsDebug() const { return true; }
+    bool IsError() const { return true; }
+    bool IsFatal() const { return true; }
+    bool IsInformation() const { return true; }
+    bool IsNotice() const { return true; }
+    bool IsTrace() const { return true; }
+    bool IsWarning() const { return true; }
 
     void Critical(std::string const& msg) { print("Critical - " + msg); }
     void Debug(std::string const& msg) { print("Debug - " + msg); }

@@ -11,20 +11,20 @@ namespace Lib {
 
 LibClassSupport::LibClassSupport(int pId) : id(pId)
 {
-    LibLogger l("lib");
-    l.Debug("LibClassSupport ctor ID: " + Poco::NumberFormatter::format(id));
+    PCLIB_GETLOGGER("lib");
+    PCLIB_LOGGER_DEBUG_CHECK("LibClassSupport ctor ID: " + Poco::NumberFormatter::format(id));
 }
 
 LibClassSupport::~LibClassSupport()
 {
-    LibLogger l("lib");
-    l.Debug("LibClassSupport dtor ID: " + Poco::NumberFormatter::format(id));
+    PCLIB_GETLOGGER("lib");
+    PCLIB_LOGGER_DEBUG_CHECK("LibClassSupport dtor ID: " + Poco::NumberFormatter::format(id));
 }
 
 void LibClassSupport::DoSomething()
 {
-    LibLogger l("lib");
-    l.Information("LibClassSupport DoSomething ID: " + Poco::NumberFormatter::format(id));
+    PCLIB_GETLOGGER("lib");
+    PCLIB_LOGGER_INFORMATION_CHECK("LibClassSupport DoSomething ID: " + Poco::NumberFormatter::format(id));
 }
 
 }

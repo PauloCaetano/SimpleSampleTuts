@@ -11,26 +11,26 @@ namespace Lib {
 
 LibClassUtility1::LibClassUtility1(int pId) : id(pId), lcs(10+id)
 {
-    LibLogger l("lib");
-    l.Debug("LibClassUtility1 ctor ID: " + Poco::NumberFormatter::format(id));
+    PCLIB_GETLOGGER("lib");
+    PCLIB_LOGGER_DEBUG_CHECK("LibClassUtility1 ctor ID: " + Poco::NumberFormatter::format(id));
 }
 
 LibClassUtility1::~LibClassUtility1()
 {
-    LibLogger l("lib");
-    l.Debug("LibClassUtility1 dtor ID: " + Poco::NumberFormatter::format(id));
+    PCLIB_GETLOGGER("lib");
+    PCLIB_LOGGER_DEBUG_CHECK("LibClassUtility1 dtor ID: " + Poco::NumberFormatter::format(id));
 }
 
 void LibClassUtility1::DoSomething()
 {
-    LibLogger l("lib");
-    l.Information("LibClassUtility1 DoSomething ID: " + Poco::NumberFormatter::format(id));
+    PCLIB_GETLOGGER("lib");
+    PCLIB_LOGGER_INFORMATION_CHECK("LibClassUtility1 DoSomething ID: " + Poco::NumberFormatter::format(id));
 }
 
 void LibClassUtility1::DoSomethingWithSupport()
 {
-    LibLogger l("lib");
-    l.Information("LibClassUtility1 DoSomethingWithSupport ID: " + Poco::NumberFormatter::format(id));
+    PCLIB_GETLOGGER("lib");
+    PCLIB_LOGGER_INFORMATION_CHECK("LibClassUtility1 DoSomethingWithSupport ID: " + Poco::NumberFormatter::format(id));
     lcs.DoSomething();
 }
 
