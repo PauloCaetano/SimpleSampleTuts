@@ -9,6 +9,11 @@ Contains the following samples/tutorials:
  A solution for implementing logging in a library. See posts [here](http://cidebycide.blogspot.pt/2013/05/logger-wrapper-revisited.html).
  Uses POCO C++'s classes, but these can be easily removed. Includes project files for MSVC and Qt Creator.
 
+* Macro Logger
+
+ Another shot at implementing logging in a library. See posts [here]().
+ This time, everything is "done with macros".
+ 
 * Qt\LayoutTutorial
 
  Files for the three-part Qt layout tutorial [here](http://cidebycide.blogspot.pt/2013/04/qt-layout-tutorial-part-i.html).
