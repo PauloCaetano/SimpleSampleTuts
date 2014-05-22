@@ -11,7 +11,7 @@ Contains the following samples/tutorials:
 
 * Macro Logger
 
- Another shot at implementing logging in a library. See posts [here]().
+ Another shot at implementing logging in a library. See posts [here](http://cidebycide.blogspot.pt/2014/05/logger-abstraction-poc.html).
  This time, everything is "done with macros".
  
 * Qt\LayoutTutorial
