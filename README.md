@@ -4,6 +4,12 @@ SimpleSampleTuts
 Simple code samples/concepts and tutorials, in C++.
 
 Contains the following samples/tutorials:
+* ProjectConfig
+
+ An utility to share a common structure for Qt Creator/MSVC projects.
+ Each tool has its own project directory, but share the same source code.
+ Uses Boost and code from the [bluesy](https://github.com/PauloCaetano/bluesy) repository.
+ 
 * Logger
 
  A solution for implementing logging in a library. See posts [here](http://cidebycide.blogspot.pt/2013/05/logger-wrapper-revisited.html).
